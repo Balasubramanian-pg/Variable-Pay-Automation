@@ -1,7 +1,7 @@
 # Variable Pay Automation System for FC Team
 
 ## Overview
-This system automates the calculation and reporting of variable pay for the entire FC (Financial Consulting) Team. The solution integrates Excel Online documents with a backend database to streamline the incentive calculation process.
+This system automates the calculation and reporting of variable pay for the entire FC Team. The solution integrates Excel Online documents with a backend database to streamline the incentive calculation process.
 
 ## Data Architecture
 
