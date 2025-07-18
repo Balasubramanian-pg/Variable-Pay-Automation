@@ -1,4 +1,4 @@
-Copy
+```sql
 Table employee_master {
   id integer [primary key]
   name varchar
@@ -33,5 +33,7 @@ Table incentive_master {
 // Define relationships
 Ref: client_master.id < billing.client_id // one-to-many
 Ref: employee_master.id < incentive_master.employee_id // one-to-many
+
+```sql
 
 This DBML schema defines the four tables needed for your incentive calculation system and establishes the necessary relationships between them.
