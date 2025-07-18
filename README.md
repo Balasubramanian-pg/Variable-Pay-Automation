@@ -59,8 +59,8 @@ graph TD
 3. System automatically merges files at quarter-end
 
 ### File Naming Convention
-`[EmployeeID]_[Quarter]_[SubmissionDate].xlsx`  
-Example: `FC1085_Q3_2023-09-30.xlsx`
+`[EmployeeID]_[Quarter]_[FinancialYear].xlsx`  
+Example: `FC0038_Q2_FY25.xlsx`
 
 ## Technical Implementation
 
@@ -106,12 +106,3 @@ Automated quarterly reports generated in three formats:
 2. Excel (Detailed Breakdown)
 3. Power BI (Interactive Dashboard)
 ```
-
-Key features incorporated:
-- Clear data ownership and update processes
-- Approval workflow visualization
-- Technical implementation details
-- File storage structure
-- Audit requirements
-- Role-based access control
-- Output reporting formats
