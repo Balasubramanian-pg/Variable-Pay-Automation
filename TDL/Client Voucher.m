@@ -1,5 +1,5 @@
 let
-    // Step 1: Define XML envelope
+    // Step 1: Define XML envelope for Tally export
     xmlEnvelope = "
     <ENVELOPE>
      <HEADER>
@@ -17,37 +17,27 @@ let
        </EXPORTDATA>
      </BODY>
     </ENVELOPE>",
-
-    // Step 2: Fetch raw CSV as plain text
-    RawResponse = Text.FromBinary(Web.Contents("http://localhost:9000", [
+    
+    // Step 2: Fetch response from Tally
+    RawResponse = Web.Contents("http://localhost:9000", [
         Content = Text.ToBinary(xmlEnvelope),
         Headers = [#"Content-Type" = "text/xml"]
-    ])),
-
-    // Step 3: Split raw text into individual lines
-    Lines = Text.Split(RawResponse, "#(lf)"),
-
-    // Step 4: Remove empty lines
-    NonEmptyLines = List.Select(Lines, each Text.Trim(_) <> ""),
-
-    // Step 5: Split each line into fields (CSV format, so handle quotes)
-    ParsedLines = List.Transform(NonEmptyLines, each Csv.Document(_, [Delimiter = ",", QuoteStyle = QuoteStyle.Csv])),
-
-    // Step 6: Flatten into a table (each row is one voucher entry)
-    Flattened = Table.FromList(ParsedLines, Splitter.SplitByNothing(), null, null, ExtraValues.Ignore),
-    Expanded = Table.ExpandTableColumn(Flattened, "Column1", {"Column1", "Column2", "Column3", "Column4", "Column5", "Column6"}),
-
-    // Step 7: Rename columns to meaningful names
-    Renamed = Table.RenameColumns(Expanded, {
-        {"Column1", "Date"},
-        {"Column2", "Ledger Name"},
-        {"Column5", "Amount"}
-    }, MissingField.Ignore),
-
-    // Step 8: Filter only Sundry Debtors (adjust keyword as needed)
-    Filtered = Table.SelectRows(Renamed, each Text.Contains([Ledger Name], "Debtor") or Text.Contains([Ledger Name], "Customer")),
-
-    // Step 9: Select final output columns
-    Final = Table.SelectColumns(Filtered, {"Date", "Ledger Name", "Amount"})
+    ]),
+    
+    // Step 3: Convert to text
+    ResponseText = Text.FromBinary(RawResponse),
+    
+    // Step 4: Split into lines and remove empty lines
+    Lines = Text.Split(ResponseText, "#(lf)"),
+    CleanLines = List.Select(Lines, each Text.Trim(_) <> ""),
+    
+    // Step 5: Create table with row numbers to group transactions
+    TableWithIndex = Table.FromList(CleanLines, Splitter.SplitByNothing(), {"Column1"}),
+    #"Split Column by Delimiter" = Table.SplitColumn(TableWithIndex, "Column1", Splitter.SplitTextByDelimiter(",", QuoteStyle.Csv), {"Column1.1", "Column1.2", "Column1.3", "Column1.4", "Column1.5", "Column1.6"}),
+    #"Changed Type" = Table.TransformColumnTypes(#"Split Column by Delimiter",{{"Column1.1", type text}, {"Column1.2", type text}, {"Column1.3", type text}, {"Column1.4", type number}, {"Column1.5", type number}, {"Column1.6", type text}}),
+    #"Renamed Columns" = Table.RenameColumns(#"Changed Type",{{"Column1.1", "Date"}, {"Column1.2", "Ledger"}, {"Column1.3", "Transaction Type"}}),
+    #"Removed Columns" = Table.RemoveColumns(#"Renamed Columns",{"Column1.6"}),
+    #"Renamed Columns1" = Table.RenameColumns(#"Removed Columns",{{"Column1.4", "Credit"}, {"Column1.5", "Debit"}}),
+    #"Filtered Rows" = Table.SelectRows(#"Renamed Columns1", each ([Transaction Type] = "Sale"))
 in
-    Final
+    #"Filtered Rows"
