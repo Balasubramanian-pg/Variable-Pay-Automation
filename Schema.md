@@ -36,4 +36,8 @@ Ref: employee_master.id < incentive_master.employee_id // one-to-many
 
 ```sql
 
+---
 This DBML schema defines the four tables needed for your incentive calculation system and establishes the necessary relationships between them.
+
+<img width="1178" height="752" alt="image" src="https://github.com/user-attachments/assets/6e03915b-0f16-49e7-895d-65219bf21038" />
+
