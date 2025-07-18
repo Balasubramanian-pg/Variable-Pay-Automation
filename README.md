@@ -1,6 +1,3 @@
-Here's a comprehensive **README.md** document incorporating your requirements for the Variable Pay Automation System:
-
-```markdown
 # Variable Pay Automation System for FC Team
 
 ## Overview
@@ -33,9 +30,8 @@ The system maintains four core datasets:
 ## Workflow Process
 
 ### Approval Matrix
-```
 Partner → Practice Head → CEM → Trainee
-```
+
 
 ### Data Flow
 ```mermaid
@@ -119,5 +115,3 @@ Key features incorporated:
 - Audit requirements
 - Role-based access control
 - Output reporting formats
-
-Would you like me to add any specific sections about error handling, data validation rules, or the specific TDL implementation details?
